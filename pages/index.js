@@ -69,6 +69,7 @@ export default function Home() {
     const signatureDataUrl = signaturePadRef.current.toDataURL();
     // Créer un nouvel objet d'image à partir de l'image de la signature
     setSign(signatureDataUrl);
+    alert("Signature enregistrée. Tu peux télécharger ton PDF !")
   };
 
 
