@@ -1,36 +1,4 @@
-import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
-
-const MyPdf = ({ nom, prenom, imageData }) => {
-  return (
-    <Document>
-      <Page>
-        <View style={styles.container}>
-          <Text style={styles.title}>Formulaire PDF</Text>
-          <Text style={styles.subtitle}>Nom: {nom}</Text>
-          <Text style={styles.subtitle}>Prénom: {prenom}</Text>
-        </View>
-      </Page>
-    </Document>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-});
-
 
 function getFirstAndLastDayOfMonth(date) {
     // Récupérer le mois et l'année de la date passée en paramètre

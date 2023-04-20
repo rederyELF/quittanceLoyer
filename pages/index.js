@@ -1,16 +1,11 @@
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import React, { useState, useRef, useEffect } from 'react';
-import { Document, Page, Text, StyleSheet, Image, PDFViewer } from '@react-pdf/renderer';
-import jsPDF from 'jspdf';
-import { Image as ReactPDFImage } from '@react-pdf/image';
-import { saveAs } from 'file-saver';
-import { generatePdf } from './generatePdf';
+import { StyleSheet } from '@react-pdf/renderer';
+import generatePdf  from '../utils/generatePdf';
 import '../styles/Home.module.css'; // Fichier CSS pour le style du formulaire
 import SignaturePad from 'signature_pad';
 
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const [nom, setNom] = useState('');
