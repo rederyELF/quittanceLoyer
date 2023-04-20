@@ -78,7 +78,9 @@
   padding: 0;
   margin: 0;
 }
-
+.form {
+  margin-top: 3%;
+}
 html,
 body {
   max-width: 100vw;
@@ -95,10 +97,67 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+label {
+  font-weight: bold;
+}
+
+input {
+  padding: 5px;
+  margin-top: 5px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
+
+.submit-button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Style pour le bouton "Effacer la signature" */
+.btn-clear {
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  background-color: #cc0000;
+}
+
+/* Style pour le bouton "Sauvegarder la signature" */
+.btn-save {
+  background-color: #276689;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background-color: #276689;
+}
+
+.select-style {
+  border: 1px solid #ccc;
+  padding: 8px;
+  color: #ffffff;
+  width: 100%;
+  /* Autres propriétés de style personnalisées */
+}
+
 
 @media (prefers-color-scheme: dark) {
   html {
