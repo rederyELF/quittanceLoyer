@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet } from '@react-pdf/renderer';
-import generatePdf  from '../utils/generatePdf';
+import {generatePdf}  from '../utils/generatePdf';
 import '../styles/Home.module.css'; // Fichier CSS pour le style du formulaire
 import SignaturePad from 'signature_pad';
 

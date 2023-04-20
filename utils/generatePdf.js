@@ -34,6 +34,19 @@ function getFirstAndLastDayOfMonth(date) {
     return `Quittance-de-loyer-${year}-${month}-${day}`;
   }
 
+  function transformerDate(date) {
+    // Séparation des composantes de la date
+    var composantes = date.split("-");
+    var annee = composantes[0];
+    var mois = composantes[1];
+    var jour = composantes[2];
+  
+    // Retour de la date transformée
+    return jour + "/" + mois + "/" + annee;
+  }
+  
+
+
 
 // Récupère les valeurs du formulaire et génère le PDF
 export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign}) => {
@@ -70,7 +83,7 @@ export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, ad
     // Ajoute le contenu au PDF
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text(`Quittance de loyer du mois du : ${date}`, 20, 50, { underline: true });
+    doc.text(`Quittance de loyer du mois du : ${transformerDate(date)}`, 20, 50, { underline: true });
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     
@@ -102,8 +115,8 @@ export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, ad
     doc.text(`Provision pour charge: ${chargesAmount} euros`, 20, 135);
     doc.text(`Total: ${(parseInt(loyerAmount) + parseInt(chargesAmount))} euros`, 20, 140);
 
-    doc.text(`Date du paiement: ${datePayment}`, 20, 150);
-    doc.text(`Fait à: ${doneAt} le ${doneDate}`, 20, 160);
+    doc.text(`Date du paiement: ${transformerDate(datePayment)}`, 20, 150);
+    doc.text(`Fait à: ${doneAt} le ${transformerDate(doneDate)}`, 20, 160);
 
     doc.text(`Signature : `, 20, 170);
 
