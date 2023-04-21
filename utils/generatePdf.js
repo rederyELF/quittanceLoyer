@@ -47,10 +47,8 @@ function getFirstAndLastDayOfMonth(date) {
   
 
 
-
-// Récupère les valeurs du formulaire et génère le PDF
-export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign}) => {
-    const doc = new jsPDF();
+function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth) {
+  const doc = new jsPDF();
     /// Définit la police du titre en gras et en gros
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
@@ -96,7 +94,6 @@ export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, ad
     doc.text(`${adresse}`, 20, 70);
     doc.text(`${codePostal} ${ville}`, 20, 75);
 
-    var dayMonth = getFirstAndLastDayOfMonth(new Date(datePayment));
 
     doc.text(`Je soussigné ${prenom} ${nom} propriétaire du logement désigné ci-dessus, déclare avoir reçu de `, 20, 90);
     //$
@@ -115,7 +112,7 @@ export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, ad
     doc.text(`Provision pour charge: ${chargesAmount} euros`, 20, 135);
     doc.text(`Total: ${(parseInt(loyerAmount) + parseInt(chargesAmount))} euros`, 20, 140);
 
-    doc.text(`Date du paiement: ${transformerDate(datePayment)}`, 20, 150);
+    doc.text(`Date du paiement: ${dayMonth.midDate ? dayMonth.midDate : transformerDate(datePayment)}`, 20, 150);
     doc.text(`Fait à: ${doneAt} le ${transformerDate(doneDate)}`, 20, 160);
 
     doc.text(`Signature : `, 20, 170);
@@ -134,5 +131,25 @@ export const generatePdf = async ({ nom, prenom, nomLocation, prenomLocation, ad
     doc.text(`(article 7-1 de la loi n° 89-462 du 6 juillet 1989).`, 20, 250);
     // Sauvegarde le PDF en tant que fichier
     doc.save(getCurrentDate());
+}
+
+
+// Récupère les valeurs du formulaire et génère le PDF
+export const generatePdf = ({ nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRange, dateRangeArray}) => {
+  //console.log(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRangeArray)  
+  if (dateRangeArray && dateRangeArray.length > 0) {
+      for (const dateRange of dateRangeArray) {
+        console.log(dateRange);
+        templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRange)
+        //console.log(`Période du : ${(dateRange.firstDay)} - ${(dateRange.lastDay)}`);
+      }
+    } else {
+      var dayMonth = getFirstAndLastDayOfMonth(new Date(datePayment));
+      templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth)
+
+      console.log("On lance en normal");
+    }
+  
+   
 };
 

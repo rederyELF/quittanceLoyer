@@ -5,6 +5,9 @@ import { StyleSheet } from '@react-pdf/renderer';
 import {generatePdf}  from '../utils/generatePdf';
 import '../styles/Home.module.css'; // Fichier CSS pour le style du formulaire
 import SignaturePad from 'signature_pad';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 
 export default function Home() {
@@ -34,11 +37,68 @@ export default function Home() {
   
   const signaturePadRef = useRef(null); // Define signaturePadRef as a useRef
 
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [dateRangeArray, setDateRangeArray] = useState(null);
 
-  const handleSubmit = (e) => {
+  const [isMultipleDate, setIsMultipleDate] = useState(true);
+
+  const [afficherPlageDates, setAfficherPlageDates] = useState(false);
+  const dataArrayRef = useRef([]);
+
+  const handleCheckboxChange = () => {
+    setAfficherPlageDates(!afficherPlageDates);
+    if(afficherPlageDates === false) {
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
+
+  
+  const getDateRangeArray = (startDate, endDate) => {
+    const current = new Date(startDate);
+    const last = new Date(endDate);
+    const dateRangeArray = [];
+
+    while (current <= last) {
+      const dateBegin = new Date(current.getFullYear(), current.getMonth(), 1);
+      const dateMid = new Date(current.getFullYear(), current.getMonth(), 15);
+
+      const dateEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0);
+      const formattedDateBegin = formatDate(dateBegin);
+      const formattedDateMid = formatDate(dateMid);
+      const formattedDateEnd = formatDate(dateEnd);
+      dateRangeArray.push({ firstDay: formattedDateBegin, lastDay: formattedDateEnd, midDate: formattedDateMid });
+      current.setMonth(current.getMonth() + 1);
+    }
+    console.log("ICI PLEASE",dateRangeArray);
+    setDateRangeArray(dateRangeArray);
+    return dateRangeArray;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("LA : ",dateRangeArray)
     // Appelle la fonction generatePdf avec les valeurs du formulaire
-    generatePdf({ nom, prenom, nomLocation,prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign });
+    generatePdf(
+      { nom, 
+        prenom,
+        nomLocation,
+        prenomLocation,
+        adresse,
+        image,
+        codePostal, 
+        ville, 
+        date, 
+        ownerLocation, 
+        datePayment,
+        loyerAmount,
+        chargesAmount, 
+        doneAt, 
+        doneDate,
+        sign, 
+        dateRangeArray
+       });
   };
 
   const handleImageChange = (e) => {
@@ -72,6 +132,12 @@ export default function Home() {
     alert("Signature enregistrée. Tu peux télécharger ton PDF !")
   };
 
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <>
@@ -113,10 +179,7 @@ export default function Home() {
             required
           />
         </div>
-
-<br/>
-
-
+    <br/>
     <div className="form-group">
       <label htmlFor="nomLocation">Nom du Locataire: </label>
       <input
@@ -194,6 +257,38 @@ export default function Home() {
       />
     </div>
         
+
+    <input
+        type="checkbox"
+        id="checkbox"
+        checked={afficherPlageDates}
+        onChange={handleCheckboxChange}
+      />
+      <label htmlFor="checkbox">Générer plusieurs quittance sur une plage de date</label>
+    {
+      afficherPlageDates && <div className="form-group">
+        <label htmlFor="dateBegin">Date de début : </label>
+        <input
+          type="date"
+          id="dateBegin"
+          name="dateBegin"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}/>
+
+          <label htmlFor="end-date" style={{marginLeft : "10px"}}>Date de fin:</label>
+          <input
+            type="date"
+            id="endDate"
+            name="endDate"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              getDateRangeArray(startDate, e.target.value);
+            }}/>
+      </div>
+    }
+
+
     <div className="form-group">
       <label htmlFor="datePayment">Date de paiement : </label>
       <input
@@ -295,13 +390,13 @@ export default function Home() {
         </div>
         <br/>
 
-        <button type="button" class="btn-clear" onClick={clearSignature}>Effacer la signature</button>
-        <button type="button" class="btn-save" onClick={saveSignatureAsImage}>Sauvegarder la signature</button>
+        <button type="button" className="btn-clear" onClick={clearSignature}>Effacer la signature</button>
+        <button type="button" className="btn-save" onClick={saveSignatureAsImage}>Sauvegarder la signature</button>
       </div>}
 
       <br/>
 
-    <button type="submit" class="submit-button">Générer PDF</button>
+    <button type="submit" className="submit-button">Générer PDF</button>
   </form>
 </div>
       </main>

@@ -144,6 +144,10 @@
     padding: 4rem;
   }
 
+  .form {
+    margin-top: 5%;
+  }
+
   .grid {
     grid-template-columns: 1fr;
     margin-bottom: 120px;
