@@ -81,7 +81,7 @@ function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, c
     // Ajoute le contenu au PDF
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text(`Quittance de loyer du mois du : ${transformerDate(date)}`, 20, 50, { underline: true });
+    doc.text(`Quittance de loyer du mois du : ${dayMonth.lastDay ? dayMonth.lastDay : transformerDate(date)}`, 20, 50, { underline: true });
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     
