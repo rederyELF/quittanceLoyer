@@ -9,7 +9,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import Script from 'next/script';
-import Head from 'next/head';
 
 export default function Home() {
   const [nom, setNom] = useState('');
