@@ -400,7 +400,7 @@ export default function Home() {
     <button type="submit" className="submit-button">Générer PDF</button>
   </form>
 </div>
-<<div>
+<div>
       {/* Inclure les balises Head et Script pour charger le script externe */}
       <Head>
         <Script src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" strategy="beforeInteractive" />
