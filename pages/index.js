@@ -8,7 +8,8 @@ import SignaturePad from 'signature_pad';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { startOfMonth, endOfMonth } from 'date-fns';
-
+import Script from 'next/script';
+import Head from 'next/head';
 
 export default function Home() {
   const [nom, setNom] = useState('');
@@ -399,6 +400,30 @@ export default function Home() {
     <button type="submit" className="submit-button">Générer PDF</button>
   </form>
 </div>
+<<div>
+      {/* Inclure les balises Head et Script pour charger le script externe */}
+      <Head>
+        <Script src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" strategy="beforeInteractive" />
+      </Head>
+      {/* Insérer le code du bouton dans votre composant */}
+      <div className="bmc-button-container">
+        <a
+          className="bmc-button"
+          data-name="bmc-button"
+          data-slug="rubenEDE"
+          data-color="#FFDD00"
+          data-emoji=""
+          data-font="Cookie"
+          data-text="Buy me a coffee"
+          data-outline-color="#000000"
+          data-font-color="#000000"
+          data-coffee-color="#ffffff"
+        >
+          {/* Texte de secours pour les navigateurs qui ne supportent pas JavaScript */}
+          Buy me a coffee
+        </a>
+      </div>
+    </div>
       </main>
     </>
   )
