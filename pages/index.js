@@ -413,18 +413,3 @@ export default function Home() {
     </>
   )
 }
-
-const stylesPdf = StyleSheet.create({
-  fieldLabel: {
-    marginBottom: 5,
-  },
-  fieldValue: {
-    marginBottom: 10,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    objectFit: 'contain',
-    marginBottom: 10,
-  },
-});
