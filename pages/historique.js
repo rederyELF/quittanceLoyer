@@ -143,20 +143,6 @@ export default function Historique() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {Number(quittance.loyerAmount) + Number(quittance.chargesAmount)} €
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => window.open(`/api/pdf?id=${index}`, '_blank')}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        Voir PDF
-                      </button>
-                      <button
-                        onClick={() => {/* Logique de suppression */}}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Supprimer
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
