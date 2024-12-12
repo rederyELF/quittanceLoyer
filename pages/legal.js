@@ -26,7 +26,7 @@ export default function Legal() {
                 </h2>
                 <p className="text-gray-600">
                   Ce site est édité par Ruben EDERY.<br />
-                  Contact : ruben@rln-consulting.com<br />
+                  Contact : <a href="mailto:ruben@rln-consulting.com">ruben@rln-consulting.com</a><br />
                   Site hébergé par Vercel Inc.
                 </p>
               </section>
@@ -36,7 +36,7 @@ export default function Legal() {
                   2. Propriété intellectuelle
                 </h2>
                 <p className="text-gray-600">
-                  L'ensemble du contenu de ce site est protégé par le droit d'auteur. 
+                  L&apos;ensemble du contenu de ce site est protégé par le droit d&apos;auteur. 
                 </p>
               </section>
 
@@ -62,7 +62,7 @@ export default function Legal() {
                 </h2>
                 <p className="text-gray-600">
                   Ce site utilise uniquement des cookies techniques essentiels au 
-                  fonctionnement du site. Aucun cookie publicitaire n'est utilisé.
+                  fonctionnement du site. Aucun cookie publicitaire n&apos;est utilisé.
                 </p>
               </section>
 
@@ -71,7 +71,7 @@ export default function Legal() {
                   5. Limitation de responsabilité
                 </h2>
                 <p className="text-gray-600">
-                  Les quittances générées le sont à titre indicatif. L'utilisateur reste 
+                  Les quittances générées le sont à titre indicatif. L&apos;utilisateur reste 
                   responsable de la conformité des documents générés avec la législation 
                   en vigueur.
                 </p>

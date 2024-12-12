@@ -52,7 +52,7 @@ export default function Header() {
               href="/guide"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Guide d'utilisation
+              Guide d&apos;utilisation
             </Link>
             <Link 
               href="/legal"
@@ -117,7 +117,7 @@ export default function Header() {
                 href="/guide"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                Guide d'utilisation
+                Guide d&apos;utilisation
               </Link>
               <Link 
                 href="/legal"

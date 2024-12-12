@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const PDFPreview = ({ data }) => {
   // Fonction pour formater la date
   const formatDate = (dateString) => {
@@ -83,10 +85,12 @@ const PDFPreview = ({ data }) => {
           <div className="text-right">
             <p className="text-sm text-gray-500 mb-2">Signature du bailleur</p>
             {data.sign && (
-              <img 
+              <Image 
                 src={data.sign} 
                 alt="Signature" 
                 className="h-16 object-contain"
+                width={100}
+                height={100}
               />
             )}
           </div>

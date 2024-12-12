@@ -23,14 +23,12 @@ export default function Home() {
   const [adresse, setAdresse] = useState('');
   const [codePostal, setCodePostal] = useState('');
   const [ville, setVille] = useState('');
-  const [image, setImage] = useState(null);
   const [datePayment, setDatePayment] = useState('');
   const [loyerAmount, setLoyerAmount] = useState('');
   const [chargesAmount, setChargesAmount] = useState('');
   const [doneAt, setDoneAt] = useState('');
   const [doneDate, setDoneDate] = useState('');
   const [sign, setSign] = useState('');
-  const [source, setSource] = useState('Signature');
   const signaturePadRef = useRef(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -154,17 +152,6 @@ export default function Home() {
         ]
       });
     }
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setImage(reader.result);
-    };
-
-    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
@@ -697,58 +684,37 @@ export default function Home() {
 
                   {/* Section Signature */}
                   <div className="border-t pt-6">
-                    <div className="mb-4">
+                    <div className="space-y-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Type de signature
+                        Signature
                       </label>
-                      <select
-                        onChange={(e) => setSource(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="Signature">Signature manuscrite</option>
-                        <option value="Image">Image de signature</option>
-                      </select>
-                    </div>
-
-                    {source === "Signature" ? (
-                      <div className="space-y-4">
-                        <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
-                          <canvas
-                            ref={signaturePadRef}
-                            className="w-full h-64 touch-none"
-                            style={{
-                              touchAction: 'none',
-                              backgroundColor: '#fff'
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-gray-500">
-                            {signatureStatus === 'empty' && 'Signez ici'}
-                            {signatureStatus === 'drawing' && 'En train de signer...'}
-                            {signatureStatus === 'saved' && 'Signature sauvegardée ✓'}
-                          </span>
-                          {signatureStatus !== 'empty' && (
-                            <button
-                              type="button"
-                              onClick={clearSignature}
-                              className="text-sm text-red-600 hover:text-red-800"
-                            >
-                              Effacer
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                          className="w-full p-2 border border-gray-300 rounded-md"
+                      <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
+                        <canvas
+                          ref={signaturePadRef}
+                          className="w-full h-64 touch-none"
+                          style={{
+                            touchAction: 'none',
+                            backgroundColor: '#fff'
+                          }}
                         />
                       </div>
-                    )}
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-500">
+                          {signatureStatus === 'empty' && 'Signez ici'}
+                          {signatureStatus === 'drawing' && 'En train de signer...'}
+                          {signatureStatus === 'saved' && 'Signature sauvegardée ✓'}
+                        </span>
+                        {sign && (
+                          <button
+                            type="button"
+                            onClick={clearSignature}
+                            className="text-sm text-red-600 hover:text-red-800"
+                          >
+                            Effacer
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   <button
@@ -791,7 +757,7 @@ export default function Home() {
                   Aperçu de vos quittances
                 </h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Consultez rapidement vos statistiques et accédez à l'historique complet
+                  Consultez rapidement vos statistiques et accédez à l&apos;historique complet
                 </p>
               </div>
               <QuickAccess />

@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 
+const fields = [
+  { key: 'nom', label: 'Nom du propriétaire' },
+  { key: 'prenom', label: 'Prénom du propriétaire' },
+  { key: 'nomLocation', label: 'Nom du locataire' },
+  { key: 'prenomLocation', label: 'Prénom du locataire' },
+  { key: 'adresse', label: 'Adresse' },
+  { key: 'codePostal', label: 'Code postal' },
+  { key: 'ville', label: 'Ville' },
+  { key: 'datePayment', label: 'Date de paiement' },
+  { key: 'loyerAmount', label: 'Montant du loyer' },
+  { key: 'chargesAmount', label: 'Montant des charges' },
+  { key: 'sign', label: 'Signature' }
+];
+
 export default function ProgressBar({ formData }) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
-  const fields = [
-    { key: 'nom', label: 'Nom du propriétaire' },
-    { key: 'prenom', label: 'Prénom du propriétaire' },
-    { key: 'nomLocation', label: 'Nom du locataire' },
-    { key: 'prenomLocation', label: 'Prénom du locataire' },
-    { key: 'adresse', label: 'Adresse' },
-    { key: 'codePostal', label: 'Code postal' },
-    { key: 'ville', label: 'Ville' },
-    { key: 'datePayment', label: 'Date de paiement' },
-    { key: 'loyerAmount', label: 'Montant du loyer' },
-    { key: 'chargesAmount', label: 'Montant des charges' },
-    { key: 'sign', label: 'Signature' }
-  ];
 
   useEffect(() => {
     const filledFields = fields.filter(field => Boolean(formData[field.key]));

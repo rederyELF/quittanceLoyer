@@ -14,13 +14,13 @@ export default function Guide() {
       title: "2. Informations du locataire",
       description: "Saisissez les coordonnées de votre locataire.",
       icon: "🏠",
-      tips: ["Vérifiez l'orthographe du nom", "Utilisez les informations du bail"]
+      tips: ["Vérifiez l&apos;orthographe du nom", "Utilisez les informations du bail"]
     },
     {
       title: "3. Détails du logement",
-      description: "Indiquez l'adresse complète du bien loué.",
+      description: "Indiquez l&apos;adresse complète du bien loué.",
       icon: "📍",
-      tips: ["L'adresse doit être identique à celle du bail", "N'oubliez pas le code postal"]
+      tips: ["L&apos;adresse doit être identique à celle du bail", "N&apos;oubliez pas le code postal"]
     },
     {
       title: "4. Montants et paiement",
@@ -33,13 +33,23 @@ export default function Guide() {
       description: "Signez la quittance électroniquement ou téléchargez une image de signature.",
       icon: "✍️",
       tips: ["La signature doit être lisible", "Vous pouvez réutiliser une signature sauvegardée"]
+    },
+    {
+      title: "6. Vérification finale",
+      description: "Vérifiez toutes les informations avant de générer la quittance.",
+      icon: "✅",
+      tips: [
+        "Relisez attentivement tous les montants",
+        "Vérifiez la période concernée",
+        "Assurez-vous que toutes les informations correspondent au bail"
+      ]
     }
   ];
 
   return (
     <>
       <Head>
-        <title>Guide d'utilisation | Générateur de Quittance de Loyer</title>
+        <title>Guide d&apos;utilisation | Générateur de Quittance de Loyer</title>
         <meta name="description" content="Apprenez à utiliser notre générateur de quittances de loyer en quelques étapes simples." />
       </Head>
 
@@ -49,7 +59,7 @@ export default function Guide() {
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-xl p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-              Guide d'utilisation
+              Guide d&apos;utilisation
             </h1>
 
             <div className="space-y-12">
@@ -82,15 +92,27 @@ export default function Guide() {
 
             <div className="mt-12 p-6 bg-gray-50 rounded-lg">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Besoin d'aide supplémentaire ?
+                Besoin d&apos;aide supplémentaire ?
               </h2>
               <p className="text-gray-600 mb-4">
-                Si vous avez des questions ou rencontrez des difficultés, n'hésitez pas à :
+                Si vous avez des questions ou rencontrez des difficultés, n&apos;hésitez pas à :
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Consulter notre FAQ en bas de la page d'accueil</li>
-                <li>Me contacter via LinkedIn</li>
+                <li>Consulter notre FAQ en bas de la page d&apos;accueil</li>
+                <li>Me contacter via <a href="https://www.linkedin.com/in/ruben-edery/" target="_blank" rel="noopener noreferrer">LinkedIn</a> ou <a href="mailto:ruben@rln-consulting.com">par Email</a></li>
+                <li>Consulter les articles juridiques sur les quittances de loyer</li>
               </ul>
+              
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-3">
+                  Informations importantes
+                </h3>
+                <p className="text-sm text-gray-600">
+                  La quittance de loyer est un document légal important. Elle fait office de preuve de 
+                  paiement pour le locataire et doit être conservée pendant au moins 3 ans. Le propriétaire 
+                  est tenu de la délivrer gratuitement au locataire qui en fait la demande.
+                </p>
+              </div>
             </div>
           </div>
         </div>

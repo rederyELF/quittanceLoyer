@@ -49,10 +49,10 @@ export default function ShareButtons() {
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Partager l'outil
+                Partager l&apos;outil
             </h2>
             <p className="text-gray-600 text-sm mb-4">
-                Aidez d'autres propriétaires à découvrir cet outil gratuit
+                Aidez d&apos;autres propriétaires à découvrir cet outil gratuit
             </p>
             <div className="flex flex-wrap gap-3">
                 {shareLinks.map((platform) => (
