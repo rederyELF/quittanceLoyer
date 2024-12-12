@@ -44,7 +44,7 @@ export default function ProgressBar({ formData }) {
   return (
     <div className="mb-8 bg-white rounded-lg shadow-md p-6">
       {/* En-tête cliquable */}
-      <button 
+      <button
         onClick={() => setIsDetailsOpen(!isDetailsOpen)}
         className="w-full flex items-center justify-between"
       >
@@ -52,29 +52,27 @@ export default function ProgressBar({ formData }) {
           <h2 className="text-lg font-semibold text-gray-700">
             Progression du formulaire
           </h2>
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-            progress === 100 ? 'bg-green-100 text-green-800' : 
-            progress > 50 ? 'bg-yellow-100 text-yellow-800' : 
-            'bg-red-100 text-red-800'
-          }`}>
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${progress === 100 ? 'bg-green-100 text-green-800' :
+            progress > 50 ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
             {progress}%
           </span>
         </div>
 
         {/* Icône de toggle */}
-        <svg 
-          className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
-            isDetailsOpen ? 'rotate-180' : ''
-          }`}
-          fill="none" 
-          viewBox="0 0 24 24" 
+        <svg
+          className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${isDetailsOpen ? 'rotate-180' : ''
+            }`}
+          fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M19 9l-7 7-7-7" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
           />
         </svg>
       </button>
@@ -90,38 +88,34 @@ export default function ProgressBar({ formData }) {
       </div>
 
       {/* Détails dépliables */}
-      <div className={`mt-4 transition-all duration-300 overflow-hidden ${
-        isDetailsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-      }`}>
+      <div className={`mt-4 transition-all duration-300 overflow-hidden ${isDetailsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}>
         <p className="text-sm text-gray-600 mb-4">{status}</p>
-        
+
         {/* Grille responsive des champs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {fields.map((field) => (
-            <div 
+            <div
               key={field.key}
-              className={`flex items-center space-x-2 p-2 rounded ${
-                formData[field.key] ? 'bg-green-50' : 'bg-gray-50'
-              }`}
-            >
-              <svg 
-                className={`w-4 h-4 flex-shrink-0 ${
-                  formData[field.key] ? 'text-green-500' : 'text-gray-300'
+              className={`flex items-center space-x-2 p-2 rounded ${formData[field.key] ? 'bg-green-50' : 'bg-gray-50'
                 }`}
-                fill="none" 
-                viewBox="0 0 24 24" 
+            >
+              <svg
+                className={`w-4 h-4 flex-shrink-0 ${formData[field.key] ? 'text-green-500' : 'text-gray-300'
+                  }`}
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              <span className={`text-sm ${
-                formData[field.key] ? 'text-gray-700' : 'text-gray-400'
-              }`}>
+              <span className={`text-sm ${formData[field.key] ? 'text-gray-700' : 'text-gray-400'
+                }`}>
                 {field.label}
               </span>
             </div>
