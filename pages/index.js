@@ -14,6 +14,15 @@ import ProfileManager from '../components/ProfileManager';
 import SaveProfileModal from '../components/SaveProfileModal';
 import Notification from '../components/Notification';
 import ShareButtons from '../components/ShareButtons';
+import OwnerForm from '../components/OwnerForm';
+import TenantForm from '../components/TenantForm';
+import PageTitle from '../components/PageTitle';
+import PropertyForm from '../components/PropertyForm';
+import PaymentForm from '../components/PaymentForm';
+import SignatureForm from '../components/SignatureForm';
+import MultipleGenerationForm from '../components/MultipleGenerationForm';
+import SignaturePadForm from '../components/SignaturePadForm';
+import PreviewSection from '../components/PreviewSection';
 
 export default function Home() {
   const [nom, setNom] = useState('');
@@ -82,7 +91,7 @@ export default function Home() {
       if (showDateRange && startDate && endDate && paymentDay) {
         // Génération multiple
         const dates = getMonthsBetweenDates(startDate, endDate);
-        
+
         // Créer un tableau de plages de dates
         const dateRangeArray = dates.map(date => {
           const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -251,10 +260,6 @@ export default function Home() {
     }
   };
 
-  const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-  };
-
   // Regroupez toutes les données dans un objet
   const formData = {
     nom,
@@ -288,108 +293,6 @@ export default function Home() {
   // Fonction pour fermer la modal
   const closeModal = () => {
     setModalConfig(prev => ({ ...prev, isOpen: false }));
-  };
-
-  // Remplacer les alerts par des modals
-  const handleClearData = () => {
-    setModalConfig({
-      isOpen: true,
-      title: 'Confirmation',
-      message: 'Êtes-vous sûr de vouloir effacer les données sauvegardées ?',
-      type: 'warning',
-      actions: [
-        {
-          label: 'Annuler',
-          onClick: closeModal,
-          style: 'default'
-        },
-        {
-          label: 'Effacer',
-          onClick: () => {
-            if (clearFormData()) {
-              setNom('');
-              setPrenom('');
-              // ... réinitialiser autres champs ...
-              setModalConfig({
-                isOpen: true,
-                title: 'Succès',
-                message: 'Données effacées avec succès !',
-                type: 'success'
-              });
-            }
-          },
-          style: 'danger'
-        }
-      ]
-    });
-  };
-
-  // Pour la sauvegarde des données
-  const handleSaveData = () => {
-    // Vérifier si les champs principaux sont vides
-    const isDataEmpty = !nom && !prenom && !adresse && !codePostal && !ville;
-
-    if (isDataEmpty) {
-      setModalConfig({
-        isOpen: true,
-        title: 'Aucune information à sauvegarder',
-        message: 'Veuillez remplir au moins un champ du formulaire.',
-        type: 'warning',
-        actions: [
-          {
-            label: 'Compris',
-            onClick: () => closeModal(),
-            style: 'primary'
-          }
-        ]
-      });
-      return;
-    }
-
-    const dataToSave = {
-      nom,
-      prenom,
-      adresse,
-      codePostal,
-      ville,
-      // ... autres champs ...
-    };
-
-    if (saveFormData(dataToSave)) {
-      setModalConfig({
-        isOpen: true,
-        title: 'Succès',
-        message: 'Informations sauvegardées avec succès !',
-        type: 'success',
-        actions: [
-          {
-            label: 'OK',
-            onClick: () => closeModal(),
-            style: 'success'
-          }
-        ]
-      });
-    } else {
-      // En cas d'erreur de sauvegarde
-      setModalConfig({
-        isOpen: true,
-        title: 'Erreur',
-        message: 'Une erreur est survenue lors de la sauvegarde des informations.',
-        type: 'error',
-        actions: [
-          {
-            label: 'Fermer',
-            onClick: () => closeModal(),
-            style: 'danger'
-          }
-        ]
-      });
-    }
-  };
-
-  // Fonction pour vérifier si des données sont présentes
-  const hasData = () => {
-    return Boolean(nom || prenom || adresse || codePostal || ville);
   };
 
   const handleSelectProfile = (profile) => {
@@ -441,14 +344,7 @@ export default function Home() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Générateur de Quittance de Loyer
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Générez facilement vos quittances de loyer et suivez votre historique
-          </p>
-        </div>
+        <PageTitle />
 
         <div className="top-0 z-10 bg-gradient-to-b from-gray-50 to-gray-100 pt-4 pb-4 -mx-4 px-4">
           <div className="max-w-7xl mx-auto">
@@ -468,308 +364,75 @@ export default function Home() {
                 {/* Section Propriétaire */}
                 <div className="space-y-6">
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations du Propriétaire</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="nom" className="block text-sm font-medium text-gray-700 mb-1">
-                          Nom du propriétaire
-                        </label>
-                        <input
-                          type="text"
-                          id="nom"
-                          name="nom"
-                          value={nom}
-                          onChange={(e) => setNom(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="prenom" className="block text-sm font-medium text-gray-700 mb-1">
-                          Prénom du propriétaire
-                        </label>
-                        <input
-                          type="text"
-                          id="prenom"
-                          name="prenom"
-                          value={prenom}
-                          onChange={(e) => setPrenom(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <OwnerForm
+                      nom={nom}
+                      prenom={prenom}
+                      onNomChange={(e) => setNom(e.target.value)}
+                      onPrenomChange={(e) => setPrenom(e.target.value)}
+                    />
                   </div>
 
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations du Locataire</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="nomLocation" className="block text-sm font-medium text-gray-700 mb-1">
-                          Nom du Locataire
-                        </label>
-                        <input
-                          type="text"
-                          id="nomLocation"
-                          name="nomLocation"
-                          value={nomLocation}
-                          onChange={(e) => setNomLocation(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="prenomLocation" className="block text-sm font-medium text-gray-700 mb-1">
-                          Prénom du Locataire
-                        </label>
-                        <input
-                          type="text"
-                          id="prenomLocation"
-                          name="prenomLocation"
-                          value={prenomLocation}
-                          onChange={(e) => setPrenomLocation(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <TenantForm
+                      nomLocation={nomLocation}
+                      prenomLocation={prenomLocation}
+                      setNomLocation={setNomLocation}
+                      setPrenomLocation={setPrenomLocation}
+                    />
                   </div>
 
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations sur le Logement</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="adresse" className="block text-sm font-medium text-gray-700 mb-1">
-                          Adresse du logement loué
-                        </label>
-                        <input
-                          type="text"
-                          id="adresse"
-                          name="adresse"
-                          value={adresse}
-                          onChange={(e) => setAdresse(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="codePostal" className="block text-sm font-medium text-gray-700 mb-1">
-                          Code Postal du logement loué
-                        </label>
-                        <input
-                          type="text"
-                          id="codePostal"
-                          name="codePostal"
-                          value={codePostal}
-                          onChange={(e) => setCodePostal(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="ville" className="block text-sm font-medium text-gray-700 mb-1">
-                          Ville du logement loué
-                        </label>
-                        <input
-                          type="text"
-                          id="ville"
-                          name="ville"
-                          value={ville}
-                          onChange={(e) => setVille(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <PropertyForm
+                      adresse={adresse}
+                      codePostal={codePostal}
+                      ville={ville}
+                      setAdresse={setAdresse}
+                      setCodePostal={setCodePostal}
+                      setVille={setVille}
+                    />
                   </div>
 
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations sur le Paiement</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="datePayment" className="block text-sm font-medium text-gray-700 mb-1">
-                          Date de paiement
-                        </label>
-                        <input
-                          type="date"
-                          id="datePayment"
-                          name="datePayment"
-                          value={datePayment}
-                          onChange={(e) => setDatePayment(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="loyerAmount" className="block text-sm font-medium text-gray-700 mb-1">
-                          Montant du loyer (Hors charges)
-                        </label>
-                        <input
-                          type="number"
-                          id="loyerAmount"
-                          name="loyerAmount"
-                          value={loyerAmount}
-                          onChange={(e) => setLoyerAmount(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="chargesAmount" className="block text-sm font-medium text-gray-700 mb-1">
-                          Montant des charges
-                        </label>
-                        <input
-                          type="number"
-                          id="chargesAmount"
-                          name="chargesAmount"
-                          value={chargesAmount}
-                          onChange={(e) => setChargesAmount(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <PaymentForm
+                      datePayment={datePayment}
+                      setDatePayment={setDatePayment}
+                      loyerAmount={loyerAmount}
+                      setLoyerAmount={setLoyerAmount}
+                      chargesAmount={chargesAmount}
+                      setChargesAmount={setChargesAmount}
+                    />
                   </div>
 
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations sur la Signature</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="doneAt" className="block text-sm font-medium text-gray-700 mb-1">
-                          Fait à
-                        </label>
-                        <input
-                          type="text"
-                          id="doneAt"
-                          name="doneAt"
-                          value={doneAt}
-                          onChange={(e) => setDoneAt(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="doneDate" className="block text-sm font-medium text-gray-700 mb-1">
-                          Le
-                        </label>
-                        <input
-                          type="date"
-                          id="doneDate"
-                          name="doneDate"
-                          value={doneDate}
-                          onChange={(e) => setDoneDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <SignatureForm
+                      doneAt={doneAt}
+                      setDoneAt={setDoneAt}
+                      doneDate={doneDate}
+                      setDoneDate={setDoneDate}
+                    />
                   </div>
 
                   <div className="border-b pb-4">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Génération multiple</h2>
-
-                    <div className="mb-4">
-                      <label className="inline-flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={showDateRange}
-                          onChange={() => setShowDateRange(!showDateRange)}
-                          className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        />
-                        <span className="ml-2 text-gray-700">Générer plusieurs quittances</span>
-                      </label>
-                    </div>
-
-                    {showDateRange && (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Date de début
-                            </label>
-                            <input
-                              type="date"
-                              value={startDate}
-                              onChange={(e) => setStartDate(e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required={showDateRange}
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Date de fin
-                            </label>
-                            <input
-                              type="date"
-                              value={endDate}
-                              onChange={(e) => setEndDate(e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required={showDateRange}
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Jour de paiement
-                            </label>
-                            <input
-                              type="number"
-                              min="1"
-                              max="31"
-                              value={paymentDay}
-                              onChange={(e) => setPaymentDay(e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Ex: 5"
-                              required={showDateRange}
-                            />
-                          </div>
-                        </div>
-
-                        {startDate && endDate && paymentDay && (
-                          <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                            <p className="text-sm text-gray-600">
-                              {`${getMonthsBetweenDates(startDate, endDate).length} quittances seront générées`}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <MultipleGenerationForm
+                      showDateRange={showDateRange}
+                      setShowDateRange={setShowDateRange}
+                      startDate={startDate}
+                      setStartDate={setStartDate}
+                      endDate={endDate}
+                      setEndDate={setEndDate}
+                      paymentDay={paymentDay}
+                      setPaymentDay={setPaymentDay}
+                    />
                   </div>
 
                   {/* Section Signature */}
                   <div className="border-t pt-6">
-                    <div className="space-y-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Signature
-                      </label>
-                      <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
-                        <canvas
-                          ref={signaturePadRef}
-                          className="w-full h-64 touch-none"
-                          style={{
-                            touchAction: 'none',
-                            backgroundColor: '#fff'
-                          }}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-500">
-                          {signatureStatus === 'empty' && 'Signez ici'}
-                          {signatureStatus === 'drawing' && 'En train de signer...'}
-                          {signatureStatus === 'saved' && 'Signature sauvegardée ✓'}
-                        </span>
-                        {sign && (
-                          <button
-                            type="button"
-                            onClick={clearSignature}
-                            className="text-sm text-red-600 hover:text-red-800"
-                          >
-                            Effacer
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <SignaturePadForm
+                      signaturePadRef={signaturePadRef}
+                      sign={sign}
+                      signatureStatus={signatureStatus}
+                      clearSignature={clearSignature}
+                    />
                   </div>
 
                   <button
@@ -797,14 +460,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-8">
-            <div className="bg-white shadow-xl rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Prévisualisation de la quittance
-              </h2>
-              <div className="border rounded-lg overflow-hidden">
-                <PDFPreview data={formData} />
-              </div>
-            </div>
+            <PreviewSection formData={formData} />
 
             <div className="bg-white shadow-xl rounded-lg overflow-hidden">
               <div className="border-b border-gray-200 p-6">
