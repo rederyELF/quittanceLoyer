@@ -79,69 +79,124 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const formattedDate = new Date(formData.datePayment).toLocaleDateString('fr-FR');
-      const quittanceData = {
-        ...formData,
-        datePayment: formattedDate
-      };
+      if (showDateRange && startDate && endDate && paymentDay) {
+        // Génération multiple
+        const dates = getMonthsBetweenDates(startDate, endDate);
+        
+        // Créer un tableau de plages de dates
+        const dateRangeArray = dates.map(date => {
+          const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+          const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          return {
+            firstDay: monthStart.toLocaleDateString('fr-FR'),
+            lastDay: monthEnd.toLocaleDateString('fr-FR'),
+            midDate: new Date(date.getFullYear(), date.getMonth(), parseInt(paymentDay)).toLocaleDateString('fr-FR')
+          };
+        });
 
-      await generatePdf(quittanceData);
+        // Ajouter dateRangeArray aux données
+        const quittanceData = {
+          ...formData,
+          dateRangeArray // Ajout du tableau de dates
+        };
 
-      // Sauvegarder dans l'historique
-      const savedQuittances = JSON.parse(localStorage.getItem('quittances_history') || '[]');
-      savedQuittances.push({
-        ...quittanceData,
-        id: Date.now(),
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem('quittances_history', JSON.stringify(savedQuittances));
+        await generatePdf(quittanceData);
 
-      // Afficher le modal de sauvegarde uniquement si les données sont saisies manuellement
-      if (dataSource === 'manual') {
-        setShowSaveModal(true);
+        // Sauvegarder dans l'historique
+        const savedQuittances = JSON.parse(localStorage.getItem('quittances_history') || '[]');
+        dates.forEach(date => {
+          savedQuittances.push({
+            ...formData,
+            datePayment: date.toLocaleDateString('fr-FR'),
+            id: Date.now() + Math.random(),
+            createdAt: new Date().toISOString()
+          });
+        });
+        localStorage.setItem('quittances_history', JSON.stringify(savedQuittances));
+
+        setModalConfig({
+          isOpen: true,
+          title: 'Succès',
+          message: `${dates.length} quittances ont été générées avec succès !`,
+          type: 'success',
+          actions: [
+            {
+              label: 'OK',
+              onClick: closeModal,
+              style: 'success'
+            }
+          ]
+        });
+      } else {
+        // Génération unique
+        const paymentDate = new Date(datePayment);
+        const dayMonth = {
+          firstDay: new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1).toLocaleDateString('fr-FR'),
+          lastDay: new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0).toLocaleDateString('fr-FR'),
+          midDate: paymentDate.toLocaleDateString('fr-FR')
+        };
+        const quittanceData = {
+          ...formData,
+          datePayment: paymentDate.toLocaleDateString('fr-FR'),
+          dayMonth
+        };
+        await generatePdf(quittanceData);
+
+        // Sauvegarder dans l'historique
+        const savedQuittances = JSON.parse(localStorage.getItem('quittances_history') || '[]');
+        savedQuittances.push({
+          ...quittanceData,
+          id: Date.now(),
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('quittances_history', JSON.stringify(savedQuittances));
+
+        // Afficher le modal de sauvegarde uniquement si les données sont saisies manuellement
+        if (dataSource === 'manual') {
+          setShowSaveModal(true);
+        }
+
+        // Afficher la modal de confirmation
+        setModalConfig({
+          isOpen: true,
+          title: 'Succès',
+          message: 'Quittance générée avec succès !',
+          type: 'success',
+          actions: [
+            {
+              label: 'OK',
+              onClick: () => {
+                closeModal();
+                // Réinitialiser le formulaire
+                setNom('');
+                setPrenom('');
+                setNomLocation('');
+                setPrenomLocation('');
+                setAdresse('');
+                setCodePostal('');
+                setVille('');
+                setDatePayment('');
+                setLoyerAmount('');
+                setChargesAmount('');
+                setDoneAt('');
+                setDoneDate('');
+                setSign('');
+                setDataSource('manual');
+                if (signaturePadRef.current?.signaturePad) {
+                  signaturePadRef.current.signaturePad.clear();
+                }
+              },
+              style: 'success'
+            }
+          ]
+        });
       }
-
-      // Afficher la modal de confirmation
-      setModalConfig({
-        isOpen: true,
-        title: 'Succès',
-        message: 'Quittance générée avec succès !',
-        type: 'success',
-        actions: [
-          {
-            label: 'OK',
-            onClick: () => {
-              closeModal();
-              // Réinitialiser le formulaire
-              setNom('');
-              setPrenom('');
-              setNomLocation('');
-              setPrenomLocation('');
-              setAdresse('');
-              setCodePostal('');
-              setVille('');
-              setDatePayment('');
-              setLoyerAmount('');
-              setChargesAmount('');
-              setDoneAt('');
-              setDoneDate('');
-              setSign('');
-              setDataSource('manual');
-              if (signaturePadRef.current?.signaturePad) {
-                signaturePadRef.current.signaturePad.clear();
-              }
-            },
-            style: 'success'
-          }
-        ]
-      });
-
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
       setModalConfig({
         isOpen: true,
         title: 'Erreur',
-        message: 'Une erreur est survenue lors de la génération de la quittance.',
+        message: 'Une erreur est survenue lors de la génération des quittances.',
         type: 'error',
         actions: [
           {

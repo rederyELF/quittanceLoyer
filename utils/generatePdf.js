@@ -1,27 +1,28 @@
 import jsPDF from 'jspdf';
 
-function getFirstAndLastDayOfMonth(date) {
-  // Récupérer le mois et l'année de la date passée en paramètre
-  const month = date.getMonth();
-  const year = date.getFullYear();
+function getFirstAndLastDayOfMonth(dateStr) {
+  // Convertir la date française (dd/mm/yyyy) en objet Date
+  const [day, month, year] = dateStr.split('/').map(Number);
+  const date = new Date(year, month - 1, day); // month - 1 car les mois commencent à 0 en JS
+
+  // Récupérer le mois et l'année
+  const currentMonth = date.getMonth();
+  const currentYear = date.getFullYear();
 
   // Créer une nouvelle date pour le premier jour du mois
-  const firstDayOfMonth = new Date(year, month, 1);
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
 
-  // Récupérer le mois suivant
-  const nextMonth = (month === 11) ? 0 : month + 1;
-
-  // Créer une nouvelle date pour le dernier jour du mois en cours
-  const lastDayOfMonth = new Date(year, nextMonth, 0);
+  // Créer une nouvelle date pour le dernier jour du mois
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
   // Formater les dates en "dd/mm/yyyy"
   const formattedFirstDay = `${("0" + firstDayOfMonth.getDate()).slice(-2)}/${("0" + (firstDayOfMonth.getMonth() + 1)).slice(-2)}/${firstDayOfMonth.getFullYear()}`;
   const formattedLastDay = `${("0" + lastDayOfMonth.getDate()).slice(-2)}/${("0" + (lastDayOfMonth.getMonth() + 1)).slice(-2)}/${lastDayOfMonth.getFullYear()}`;
 
-  // Renvoyer un objet avec les deux dates formatées
   return {
     firstDay: formattedFirstDay,
-    lastDay: formattedLastDay
+    lastDay: formattedLastDay,
+    midDate: dateStr // Ajouter la date de paiement
   };
 }
 
@@ -35,23 +36,56 @@ function getCurrentDate() {
 }
 
 const transformerDate = (dateString) => {
-  // Si la date est au format YYYY-MM-DD (format HTML input type="date")
-  if (dateString.includes('-')) {
-    const [year, month, day] = dateString.split('-');
+  try {
+    // Si la date est vide ou invalide
+    if (!dateString) {
+      throw new Error('Date invalide');
+    }
+
+    // Si la date est au format YYYY-MM-DD (format HTML input type="date")
+    if (dateString.includes('-')) {
+      const [year, month, day] = dateString.split('-');
+      // Vérifier que les composants sont valides
+      if (!year || !month || !day) {
+        throw new Error('Format de date invalide');
+      }
+      return `${day}/${month}/${year}`;
+    }
+    
+    // Si la date est déjà au format français DD/MM/YYYY
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      // Vérifier que les composants sont valides
+      if (!year || !month || !day) {
+        throw new Error('Format de date invalide');
+      }
+      // Vérifier que c'est une date valide
+      const date = new Date(year, month - 1, day);
+      if (isNaN(date.getTime())) {
+        throw new Error('Date invalide');
+      }
+      return dateString;
+    }
+
+    // Si c'est un objet Date
+    if (dateString instanceof Date) {
+      const day = String(dateString.getDate()).padStart(2, '0');
+      const month = String(dateString.getMonth() + 1).padStart(2, '0');
+      const year = dateString.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    throw new Error('Format de date non reconnu');
+    
+  } catch (error) {
+    console.error('Erreur de transformation de date:', error);
+    // En cas d'erreur, retourner la date du jour formatée
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
     return `${day}/${month}/${year}`;
   }
-  
-  // Si la date est déjà au format français DD/MM/YYYY
-  if (dateString.includes('/')) {
-    return dateString;
-  }
-
-  // En cas de format invalide, retourner la date du jour formatée
-  const today = new Date();
-  const day = String(today.getDate()).padStart(2, '0');
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const year = today.getFullYear();
-  return `${day}/${month}/${year}`;
 };
 
 function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth) {
@@ -136,10 +170,8 @@ function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, c
   doc.text(`Cette quittance annule tous les reçus qui auraient pu être établis précédemment en cas de paiement`, 20, 240);
   doc.text(`partiel du montant du présent terme. Elle est à conserver pendant trois ans par le locataire`, 20, 245);
   doc.text(`(article 7-1 de la loi n° 89-462 du 6 juillet 1989).`, 20, 250);
-  // Sauvegarde le PDF en tant que fichier
-  doc.save(getCurrentDate());
 
-  // Retourner le document PDF
+  // Retourner simplement le document
   return doc;
 }
 
@@ -167,13 +199,11 @@ export const generatePdf = async (data) => {
         data.sign,
         dateRange
       );
-      
       // Générer un nom de fichier unique pour chaque PDF
-      const fileName = `quittance_${dateRange.firstDay.replace(/\//g, '-')}.pdf`;
+      const fileName = `quittance_${dateRange.firstDay.replace(/\//g, '-')}_${Date.now()}.pdf`;
       doc.save(fileName);
     }
   } else {
-    const dayMonth = getFirstAndLastDayOfMonth(new Date(data.datePayment));
     const doc = templatePDF(
       data.nom,
       data.prenom,
@@ -191,11 +221,10 @@ export const generatePdf = async (data) => {
       data.doneAt,
       data.doneDate,
       data.sign,
-      dayMonth
+      data.dayMonth
     );
-
     // Générer le nom du fichier pour un seul PDF
-    const fileName = `quittance_${dayMonth.firstDay.replace(/\//g, '-')}.pdf`;
+    const fileName = `quittance_${data.dayMonth.midDate.replace(/\//g, '-')}_${Date.now()}.pdf`;
     doc.save(fileName);
   }
 };
