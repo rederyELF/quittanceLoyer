@@ -38,7 +38,7 @@ export default function QuickAccess() {
           Aperçu rapide
         </h2>
         <Link 
-          href="/historique"
+          href="/history"
           className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
         >
           Voir tout
@@ -98,7 +98,7 @@ export default function QuickAccess() {
       {/* Actions rapides */}
       <div className="mt-6 flex flex-col sm:flex-row gap-4">
         <Link 
-          href="/historique"
+          href="/history"
           className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center justify-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -107,7 +107,7 @@ export default function QuickAccess() {
           Voir l'historique complet
         </Link>
         <Link 
-          href="/historique#stats"
+          href="/history#stats"
           className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center justify-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
