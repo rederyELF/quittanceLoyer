@@ -85,9 +85,9 @@ export default function Legal() {
                   Pour toute question concernant ce site, vous pouvez me contacter via :
                 </p>
                 <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
-                  <li>LinkedIn : https://www.linkedin.com/in/ruben-edery/</li>
-                  <li>GitHub : https://github.com/rubenedery</li>
-                  <li>Email : ruben@rln-consulting.com</li>
+                  <li>LinkedIn : <a href="https://www.linkedin.com/in/ruben-edery/" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/ruben-edery/</a></li>
+                  <li>GitHub : <a href="https://github.com/rubenedery" target="_blank" rel="noopener noreferrer">https://github.com/rubenedery</a></li>
+                  <li>Email : <a href="mailto:ruben@rln-consulting.com">ruben@rln-consulting.com</a></li>
                 </ul>
               </section>
             </div>

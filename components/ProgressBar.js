@@ -81,7 +81,7 @@ export default function ProgressBar({ formData }) {
 
       {/* Barre de progression toujours visible */}
       <div className="mt-4">
-        <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-500 ${getProgressColor()}`}
             style={{ width: `${progress}%` }}

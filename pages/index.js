@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import HeadMeta from '../components/HeadMeta';
 import React, { useState, useRef, useEffect } from 'react';
 import { generatePdf } from '../utils/generatePdf';
 import SignaturePad from 'signature_pad';
@@ -13,6 +13,7 @@ import QuickAccess from '../components/QuickAccess';
 import ProfileManager from '../components/ProfileManager';
 import SaveProfileModal from '../components/SaveProfileModal';
 import Notification from '../components/Notification';
+import ShareButtons from '../components/ShareButtons';
 
 export default function Home() {
   const [nom, setNom] = useState('');
@@ -52,6 +53,7 @@ export default function Home() {
     }
     return [];
   });
+  const [dataSource, setDataSource] = useState('manual');
 
   /**
    * 
@@ -78,28 +80,13 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation du formulaire avec vérification de la date
-    if (!formData.nom || !formData.prenom || !formData.adresse ||
-      !formData.codePostal || !formData.ville || !formData.datePayment) {
-      setNotification({
-        type: 'error',
-        message: 'Veuillez remplir tous les champs obligatoires, y compris la date.'
-      });
-      setTimeout(() => setNotification(null), 3000);
-      return;
-    }
-
     try {
-      // Formatage de la date avant l'envoi
       const formattedDate = new Date(formData.datePayment).toLocaleDateString('fr-FR');
-
-      // Créer l'objet avec toutes les données du formulaire
       const quittanceData = {
         ...formData,
-        datePayment: formattedDate // Utiliser la date formatée
+        datePayment: formattedDate
       };
 
-      // Générer le PDF
       await generatePdf(quittanceData);
 
       // Sauvegarder dans l'historique
@@ -111,23 +98,61 @@ export default function Home() {
       });
       localStorage.setItem('quittances_history', JSON.stringify(savedQuittances));
 
-      // Afficher le modal de sauvegarde de profil
-      setShowSaveModal(true);
+      // Afficher le modal de sauvegarde uniquement si les données sont saisies manuellement
+      if (dataSource === 'manual') {
+        setShowSaveModal(true);
+      }
 
-      // Notification de succès
-      setNotification({
+      // Afficher la modal de confirmation
+      setModalConfig({
+        isOpen: true,
+        title: 'Succès',
+        message: 'Quittance générée avec succès !',
         type: 'success',
-        message: 'Quittance générée avec succès !'
+        actions: [
+          {
+            label: 'OK',
+            onClick: () => {
+              closeModal();
+              // Réinitialiser le formulaire
+              setNom('');
+              setPrenom('');
+              setNomLocation('');
+              setPrenomLocation('');
+              setAdresse('');
+              setCodePostal('');
+              setVille('');
+              setDatePayment('');
+              setLoyerAmount('');
+              setChargesAmount('');
+              setDoneAt('');
+              setDoneDate('');
+              setSign('');
+              setDataSource('manual');
+              if (signaturePadRef.current?.signaturePad) {
+                signaturePadRef.current.signaturePad.clear();
+              }
+            },
+            style: 'success'
+          }
+        ]
       });
-      setTimeout(() => setNotification(null), 3000);
 
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
-      setNotification({
+      setModalConfig({
+        isOpen: true,
+        title: 'Erreur',
+        message: 'Une erreur est survenue lors de la génération de la quittance.',
         type: 'error',
-        message: 'Une erreur est survenue lors de la génération de la quittance.'
+        actions: [
+          {
+            label: 'Fermer',
+            onClick: closeModal,
+            style: 'danger'
+          }
+        ]
       });
-      setTimeout(() => setNotification(null), 3000);
     }
   };
 
@@ -326,10 +351,22 @@ export default function Home() {
   };
 
   const handleSelectProfile = (profile) => {
-    setFormData({
-      ...formData,
-      ...profile
-    });
+    setDataSource('profile');
+    // Mettre à jour chaque état individuel
+    setNom(profile.nom || '');
+    setPrenom(profile.prenom || '');
+    setNomLocation(profile.nomLocation || '');
+    setPrenomLocation(profile.prenomLocation || '');
+    setAdresse(profile.adresse || '');
+    setCodePostal(profile.codePostal || '');
+    setVille(profile.ville || '');
+    setDatePayment(profile.datePayment || '');
+    setLoyerAmount(profile.loyerAmount || '');
+    setChargesAmount(profile.chargesAmount || '');
+    setDoneAt(profile.doneAt || '');
+    setDoneDate(profile.doneDate || '');
+    setSign(profile.sign || '');
+
     setNotification({
       type: 'success',
       message: 'Profil chargé avec succès !'
@@ -358,17 +395,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <Head>
-        <title>Générateur de Quittance de Loyer - Créez vos quittances facilement</title>
-        <meta name="description" content="Générez facilement et gratuitement vos quittances de loyer en ligne. Un outil simple et rapide pour les propriétaires." />
-        <meta name="keywords" content="quittance de loyer, générateur, propriétaire, location, pdf, gratuit" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta property="og:title" content="Générateur de Quittance de Loyer" />
-        <meta property="og:description" content="Créez vos quittances de loyer en quelques clics" />
-        <meta property="og:type" content="website" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
+      <HeadMeta />
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -381,10 +408,17 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="top-0 z-10 bg-gradient-to-b from-gray-50 to-gray-100 pt-4 pb-4 -mx-4 px-4">
+          <div className="max-w-7xl mx-auto">
+            <ProgressBar
+              formData={formData}
+              className="h-2 bg-gray-200 rounded-full overflow-hidden"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-8">
-            <ProgressBar formData={formData} />
-
             <ProfileManager onSelectProfile={handleSelectProfile} />
 
             <div className="bg-white shadow-xl rounded-lg p-8">
@@ -765,33 +799,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="lg:hidden space-y-8 mt-8">
-          <div className="bg-white shadow-xl rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Prévisualisation
-            </h2>
-            <PDFPreview data={formData} />
-          </div>
-
-          <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-            <div className="border-b border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Vos quittances
-              </h2>
-            </div>
-            <QuickAccess />
-          </div>
-        </div>
-
-        <section className="bg-white py-12">
+        <section className="bg-white py-12 mt-8">
           <div className="max-w-7xl mx-auto px-4">
             <FAQ />
           </div>
         </section>
+
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <ShareButtons />
+          </div>
+        </section>
       </main>
-
-
-
 
       <Footer />
 
