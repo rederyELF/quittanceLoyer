@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://quittance-loyer.vercel.app/sitemap.xml
