@@ -34,18 +34,25 @@ function getCurrentDate() {
   return `Quittance-de-loyer-${year}-${month}-${day}`;
 }
 
-function transformerDate(date) {
-  // Séparation des composantes de la date
-  var composantes = date.split("-");
-  var annee = composantes[0];
-  var mois = composantes[1];
-  var jour = composantes[2];
+const transformerDate = (dateString) => {
+  // Si la date est au format YYYY-MM-DD (format HTML input type="date")
+  if (dateString.includes('-')) {
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
+  // Si la date est déjà au format français DD/MM/YYYY
+  if (dateString.includes('/')) {
+    return dateString;
+  }
 
-  // Retour de la date transformée
-  return jour + "/" + mois + "/" + annee;
-}
-
-
+  // En cas de format invalide, retourner la date du jour formatée
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 
 function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth) {
   const doc = new jsPDF();
@@ -131,25 +138,65 @@ function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, c
   doc.text(`(article 7-1 de la loi n° 89-462 du 6 juillet 1989).`, 20, 250);
   // Sauvegarde le PDF en tant que fichier
   doc.save(getCurrentDate());
+
+  // Retourner le document PDF
+  return doc;
 }
 
 
 // Récupère les valeurs du formulaire et génère le PDF
-export const generatePdf = ({ nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRange, dateRangeArray }) => {
-  //console.log(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville,  date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRangeArray)  
-  if (dateRangeArray && dateRangeArray.length > 0) {
-    for (const dateRange of dateRangeArray) {
-      console.log(dateRange);
-      templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dateRange)
-      //console.log(`Période du : ${(dateRange.firstDay)} - ${(dateRange.lastDay)}`);
+export const generatePdf = async (data) => {
+  if (data.dateRangeArray && data.dateRangeArray.length > 0) {
+    for (const dateRange of data.dateRangeArray) {
+      const doc = templatePDF(
+        data.nom,
+        data.prenom,
+        data.nomLocation,
+        data.prenomLocation,
+        data.adresse,
+        data.image,
+        data.codePostal,
+        data.ville,
+        data.date,
+        data.ownerLocation,
+        data.datePayment,
+        data.loyerAmount,
+        data.chargesAmount,
+        data.doneAt,
+        data.doneDate,
+        data.sign,
+        dateRange
+      );
+      
+      // Générer un nom de fichier unique pour chaque PDF
+      const fileName = `quittance_${dateRange.firstDay.replace(/\//g, '-')}.pdf`;
+      doc.save(fileName);
     }
   } else {
-    var dayMonth = getFirstAndLastDayOfMonth(new Date(datePayment));
-    templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth)
+    const dayMonth = getFirstAndLastDayOfMonth(new Date(data.datePayment));
+    const doc = templatePDF(
+      data.nom,
+      data.prenom,
+      data.nomLocation,
+      data.prenomLocation,
+      data.adresse,
+      data.image,
+      data.codePostal,
+      data.ville,
+      data.date,
+      data.ownerLocation,
+      data.datePayment,
+      data.loyerAmount,
+      data.chargesAmount,
+      data.doneAt,
+      data.doneDate,
+      data.sign,
+      dayMonth
+    );
 
-    console.log("On lance en normal");
+    // Générer le nom du fichier pour un seul PDF
+    const fileName = `quittance_${dayMonth.firstDay.replace(/\//g, '-')}.pdf`;
+    doc.save(fileName);
   }
-
-
 };
 
