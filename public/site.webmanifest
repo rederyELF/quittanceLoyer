@@ -1,0 +1,21 @@
+{
+  "name": "Générateur de Quittance de Loyer",
+  "short_name": "Quittances",
+  "description": "Générateur gratuit de quittances de loyer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5F7FFF",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
