@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { supabase } from '../../utils/supabase';
 import { FiFileText, FiUsers, FiCalendar } from 'react-icons/fi';
+import ProfileManager from '../../components/ProfileManager';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -11,10 +12,14 @@ const Dashboard = () => {
     monthlyQuittances: 0,
     savedProfiles: 0
   });
+  const [savedProfiles, setSavedProfiles] = useState([]);
+  const [recentQuittances, setRecentQuittances] = useState([]);
 
   useEffect(() => {
     if (user) {
       loadStats();
+      loadProfiles();
+      loadRecentQuittances();
     }
   }, [user]);
 
@@ -47,6 +52,37 @@ const Dashboard = () => {
       });
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error);
+    }
+  };
+
+  const loadProfiles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profile_saves')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSavedProfiles(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des profils:', error);
+    }
+  };
+
+  const loadRecentQuittances = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('quittances')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setRecentQuittances(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des quittances récentes:', error);
     }
   };
 
@@ -123,6 +159,101 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Section des profils enregistrés */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+              Profils enregistrés
+            </h3>
+            <ProfileManager 
+              profiles={savedProfiles}
+              onDeleteProfile={async (profileId) => {
+                try {
+                  const { error } = await supabase
+                    .from('profile_saves')
+                    .delete()
+                    .eq('id', profileId)
+                    .eq('user_id', user.id);
+                  
+                  if (error) throw error;
+                  
+                  setSavedProfiles(savedProfiles.filter(p => p.id !== profileId));
+                  // Mettre à jour les stats
+                  setStats(prev => ({
+                    ...prev,
+                    savedProfiles: prev.savedProfiles - 1
+                  }));
+                } catch (error) {
+                  console.error('Erreur lors de la suppression:', error);
+                }
+              }}
+              hideSelect={true} // Nouvelle prop pour masquer le bouton de sélection
+            />
+          </div>
+        </div>
+
+        {/* Section des quittances récentes */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Dernières quittances générées
+              </h3>
+              <a
+                href="/dashboard/quittances"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Voir toutes les quittances
+              </a>
+            </div>
+
+            {recentQuittances.length > 0 ? (
+              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                        Locataire
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Montant
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Date
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Adresse
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {recentQuittances.map((quittance) => (
+                      <tr key={quittance.id}>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                          {quittance.nom_location} {quittance.prenom_location}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {(quittance.loyer_amount + quittance.charges_amount).toFixed(2)} €
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {new Date(quittance.date_payment).toLocaleDateString()}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {quittance.adresse}, {quittance.code_postal} {quittance.ville}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-gray-500">
+                Aucune quittance générée pour le moment
+              </div>
+            )}
           </div>
         </div>
 

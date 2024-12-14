@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../utils/supabase';
-import { FiUser, FiLogOut, FiMenu, FiX, FiSettings } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiMenu, FiX, FiSettings, FiGrid } from 'react-icons/fi';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -83,6 +83,13 @@ export default function Header() {
                     <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-200">
                       {user.email}
                     </div>
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                    >
+                      <FiGrid className="w-4 h-4" />
+                      Dashboard
+                    </Link>
                     <Link
                       href="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"

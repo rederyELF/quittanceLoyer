@@ -122,6 +122,7 @@ function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, c
   // Ajoute le contenu au PDF
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
+  console.log(dayMonth)
   doc.text(`Quittance de loyer du mois du : ${dayMonth.lastDay ? dayMonth.lastDay : transformerDate(date)}`, 20, 50, { underline: true });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(12);
@@ -178,7 +179,9 @@ function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, c
 
 // Récupère les valeurs du formulaire et génère le PDF
 export const generatePdf = async (data) => {
+  console.log(data);
   if (data.dateRangeArray && data.dateRangeArray.length > 0) {
+    console.log('data.dateRangeArray', data.dateRangeArray);
     for (const dateRange of data.dateRangeArray) {
       const doc = templatePDF(
         data.nom,
