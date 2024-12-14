@@ -104,6 +104,8 @@ const NewQuittance = () => {
 
     const [savedProfiles, setSavedProfiles] = useState([]);
 
+    const doneAtRef = useRef(null);
+
     // Charger les profils au montage du composant
     useEffect(() => {
         const loadProfiles = async () => {
@@ -146,6 +148,21 @@ const NewQuittance = () => {
         setChargesAmount(profile.charges_amount?.toString() || profile.chargesAmount);
         setDatePayment(new Date(profile.date_payment || profile.datePayment).toISOString().split('T')[0]);
         setSign(profile.sign);
+
+        // Ajoutez ces lignes pour charger la signature dans le SignaturePad
+        if (signaturePadRef.current?.signaturePad && profile.sign) {
+            signaturePadRef.current.signaturePad.clear();
+            signaturePadRef.current.signaturePad.fromDataURL(profile.sign);
+            setSignatureStatus('saved');
+        }
+
+        setTimeout(() => {
+            doneAtRef.current?.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            doneAtRef.current?.focus();
+        }, 100);
     };
 
     const closeModal = () => {
@@ -386,7 +403,6 @@ const NewQuittance = () => {
                     }
                 ]
             });
-
         }
     };
 
@@ -501,6 +517,7 @@ const NewQuittance = () => {
                                     doneDate={doneDate}
                                     setDoneAt={setDoneAt}
                                     setDoneDate={setDoneDate}
+                                    doneAtRef={doneAtRef}
                                 />
 
                                 <SignaturePadForm

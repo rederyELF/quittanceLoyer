@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SignatureForm = ({ doneAt, doneDate, setDoneAt, setDoneDate }) => {
+const SignatureForm = ({ doneAt, doneDate, setDoneAt, setDoneDate, doneAtRef }) => {
   return (
     <div className="border-b pb-4">
       <h2 className="text-xl font-semibold text-gray-700 mb-4">Informations sur la Signature</h2>
@@ -10,6 +10,7 @@ const SignatureForm = ({ doneAt, doneDate, setDoneAt, setDoneDate }) => {
             Fait à
           </label>
           <input
+            ref={doneAtRef}
             type="text"
             id="doneAt"
             name="doneAt"

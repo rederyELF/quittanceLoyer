@@ -19,6 +19,11 @@ const QuittancesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('');
 
+  const handleDateFilterChange = (value) => {
+    setDateFilter(value);
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     if (user) {
       loadQuittances();
@@ -42,8 +47,14 @@ const QuittancesPage = () => {
       }
 
       if (dateFilter) {
-        query = query.gte('date_payment', `${dateFilter}-01`)
-          .lt('date_payment', `${dateFilter}-31`);
+        const startDate = `${dateFilter}-01`;
+        const date = new Date(dateFilter + '-01');
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+        const endDate = `${dateFilter}-${lastDay}`;
+        
+        query = query
+          .gte('date_payment', startDate)
+          .lt('date_payment', endDate);
       }
 
       // Pagination
@@ -124,7 +135,7 @@ const QuittancesPage = () => {
                   id="date"
                   className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
                   value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
+                  onChange={(e) => handleDateFilterChange(e.target.value)}
                 />
               </div>
             </div>
