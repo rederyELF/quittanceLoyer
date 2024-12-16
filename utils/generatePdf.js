@@ -88,6 +88,27 @@ const transformerDate = (dateString) => {
   }
 };
 
+/**
+ * Génère un PDF avec les données du formulaire
+ * @param {*} nom 
+ * @param {*} prenom 
+ * @param {*} nomLocation 
+ * @param {*} prenomLocation 
+ * @param {*} adresse 
+ * @param {*} image 
+ * @param {*} codePostal 
+ * @param {*} ville 
+ * @param {*} date 
+ * @param {*} ownerLocation 
+ * @param {*} datePayment 
+ * @param {*} loyerAmount 
+ * @param {*} chargesAmount 
+ * @param {*} doneAt 
+ * @param {*} doneDate 
+ * @param {*} sign 
+ * @param {*} dayMonth 
+ * @returns 
+ */
 function templatePDF(nom, prenom, nomLocation, prenomLocation, adresse, image, codePostal, ville, date, ownerLocation, datePayment, loyerAmount, chargesAmount, doneAt, doneDate, sign, dayMonth) {
   const doc = new jsPDF();
   /// Définit la police du titre en gras et en gros
